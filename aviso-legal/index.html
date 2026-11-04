@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="es">
 <head>
+<!-- Modo de consentimiento de Google: todo denegado hasta que el usuario elija (banner en /consent.js) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage:'denied', analytics_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', functionality_storage:'granted', security_storage:'granted', wait_for_update:500});
+gtag('set', 'ads_data_redaction', true);
+gtag('set', 'url_passthrough', true);
+(function(){try{var c=JSON.parse(localStorage.getItem('ot_bf_consent')||'null');if(c&&c.ts&&Date.now()-c.ts<31536000000){gtag('consent','update',{analytics_storage:c.analytics?'granted':'denied',ad_storage:c.marketing?'granted':'denied',ad_user_data:c.marketing?'granted':'denied',ad_personalization:c.marketing?'granted':'denied'});}}catch(e){}})();
+</script>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -80,6 +89,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <h2>7. Legislación aplicable</h2>
 <p>Este aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales que resulten competentes conforme a la normativa aplicable, incluida la de protección de consumidores y usuarios.</p>
 </main>
-<footer><div class="wrap"><span>© 2026 OneToro TV SPN, S.L.</span><nav aria-label="Legal"><a href="/aviso-legal/">Aviso legal</a><a href="https://onetoro.tv/privacy-policy">Política de privacidad</a><a href="/cookies/">Cookies</a><a href="/bases-sorteo/">Bases del sorteo</a></nav></div></footer>
+<footer><div class="wrap"><span>© 2026 OneToro TV SPN, S.L.</span><nav aria-label="Legal"><a href="/aviso-legal/">Aviso legal</a><a href="https://onetoro.tv/privacy-policy">Política de privacidad</a><a href="/cookies/">Cookies</a><a href="#" data-otc-open>Configurar cookies</a><a href="/bases-sorteo/">Bases del sorteo</a></nav></div></footer>
+<script src="/consent.js" defer></script>
 </body>
 </html>
