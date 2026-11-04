@@ -2,6 +2,13 @@
    Se mide por defecto; si el usuario rechaza, se guarda en localStorage (ot_bf_consent) y se actualiza
    el modo de consentimiento de Google y el consentimiento del píxel de Meta. GTM lee la misma clave (variable "JS - Consentimiento Meta landing BF"). */
 (function () {
+  /* ================================================================
+     INTERRUPTOR DEL BANNER
+     false = banner en pausa: no aparece, se mide siempre y se oculta el enlace "Configurar cookies".
+     true  = banner activo: aparece en la primera visita y el usuario puede rechazar.
+     ================================================================ */
+  var BANNER_ACTIVO = false;
+
   var KEY = 'ot_bf_consent';
   var MAX_AGE = 1000 * 60 * 60 * 24 * 365; // se vuelve a preguntar a los 12 meses
 
@@ -86,6 +93,13 @@
 
   window.otConsent = { open: open };
   function init() {
+    // Textos que dependen de si el banner está activo (p. ej. en la política de cookies)
+    document.querySelectorAll('[data-otc-on]').forEach(function (el) { el.hidden = !BANNER_ACTIVO; });
+    document.querySelectorAll('[data-otc-off]').forEach(function (el) { el.hidden = BANNER_ACTIVO; });
+    if (!BANNER_ACTIVO) {
+      document.querySelectorAll('[data-otc-open]').forEach(function (a) { a.hidden = true; });
+      return;
+    }
     document.querySelectorAll('[data-otc-open]').forEach(function (a) {
       a.addEventListener('click', function (e) { e.preventDefault(); open(); });
     });
