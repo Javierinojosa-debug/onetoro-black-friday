@@ -1,14 +1,15 @@
 <!doctype html>
 <html lang="es">
 <head>
-<!-- Modo de consentimiento de Google: todo denegado hasta que el usuario elija (banner en /consent.js) -->
+<!-- Modo de consentimiento de Google: se mide por defecto; si el usuario rechaza en el banner (/consent.js) pasa a denegado -->
 <script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('consent', 'default', {ad_storage:'denied', analytics_storage:'denied', ad_user_data:'denied', ad_personalization:'denied', functionality_storage:'granted', security_storage:'granted', wait_for_update:500});
-gtag('set', 'ads_data_redaction', true);
-gtag('set', 'url_passthrough', true);
-(function(){try{var c=JSON.parse(localStorage.getItem('ot_bf_consent')||'null');if(c&&c.ts&&Date.now()-c.ts<31536000000){gtag('consent','update',{analytics_storage:c.analytics?'granted':'denied',ad_storage:c.marketing?'granted':'denied',ad_user_data:c.marketing?'granted':'denied',ad_personalization:c.marketing?'granted':'denied'});}}catch(e){}})();
+(function(){
+  var c=null; try{c=JSON.parse(localStorage.getItem('ot_bf_consent')||'null'); if(c&&!(c.ts&&Date.now()-c.ts<31536000000)) c=null;}catch(e){}
+  var an = !c || c.analytics !== false, mk = !c || c.marketing !== false;
+  gtag('consent', 'default', {ad_storage: mk?'granted':'denied', analytics_storage: an?'granted':'denied', ad_user_data: mk?'granted':'denied', ad_personalization: mk?'granted':'denied', functionality_storage:'granted', security_storage:'granted'});
+})();
 </script>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

@@ -1,6 +1,6 @@
 /* Banner de consentimiento de cookies · Landing Black Friday OneToro TV
-   Guarda la elección en localStorage (ot_bf_consent) y actualiza el modo de consentimiento de Google
-   y el consentimiento del píxel de Meta. GTM lee la misma clave (variable "JS - Consentimiento Meta landing BF"). */
+   Se mide por defecto; si el usuario rechaza, se guarda en localStorage (ot_bf_consent) y se actualiza
+   el modo de consentimiento de Google y el consentimiento del píxel de Meta. GTM lee la misma clave (variable "JS - Consentimiento Meta landing BF"). */
 (function () {
   var KEY = 'ot_bf_consent';
   var MAX_AGE = 1000 * 60 * 60 * 24 * 365; // se vuelve a preguntar a los 12 meses
@@ -53,7 +53,7 @@
     root.className = 'otc'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-live', 'polite'); root.setAttribute('aria-label', 'Preferencias de cookies');
     root.innerHTML =
       '<div class="otc-in">' +
-        '<p class="otc-txt"><strong>Usamos cookies.</strong> Las técnicas son necesarias para que la web funcione. Con tu permiso, usaremos también cookies de análisis y publicidad de Google y Meta para medir las visitas y mejorar nuestras campañas. Más información en la <a href="/cookies/">política de cookies</a>.</p>' +
+        '<p class="otc-txt"><strong>Usamos cookies.</strong> Además de las técnicas, necesarias para que la web funcione, usamos cookies de análisis y publicidad de Google y Meta para medir las visitas y mejorar nuestras campañas. Puedes rechazarlas o elegir cuáles aceptas. Más información en la <a href="/cookies/">política de cookies</a>.</p>' +
         '<div class="otc-btns">' +
           '<button type="button" class="otc-cfg">Configurar</button>' +
           '<button type="button" class="otc-no">Rechazar</button>' +
@@ -78,8 +78,8 @@
   function open() {
     if (!root) build();
     var c = read();
-    root.querySelector('#otc-an').checked = !!(c && c.analytics);
-    root.querySelector('#otc-mk').checked = !!(c && c.marketing);
+    root.querySelector('#otc-an').checked = !c || c.analytics !== false;
+    root.querySelector('#otc-mk').checked = !c || c.marketing !== false;
     root.hidden = false; document.body.classList.add('otc-open');
   }
   function close() { if (root) root.hidden = true; document.body.classList.remove('otc-open'); }
