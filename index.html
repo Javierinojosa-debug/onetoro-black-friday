@@ -359,11 +359,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 })();
 </script>
 <script>
-// Envío del formulario de Beyond Sales → dataLayer para GTM (Lead con event_id para deduplicar con la API de conversiones)
-window.addEventListener('beyondsales:conversion', function (e) {
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ event: 'bs_lead', event_name: e.detail.event_name, event_id: e.detail.event_id });
-});
+// Envío del formulario de Beyond Sales → dataLayer (evento bs_lead para GTM).
+// El formulario avisa a la página con postMessage FORM_SUBMITTED. Si Beyond Sales tiene activadas
+// las conversiones de Meta, trae metaConversion.event_id y lo usamos para deduplicar con la API de conversiones.
+(function () {
+  var ORIGIN = 'https://app.beyondsales.es';
+  var sent = {};
+  function uid() {
+    try { return crypto.randomUUID(); } catch (e) { return 'bs-' + Date.now() + '-' + Math.random().toString(16).slice(2); }
+  }
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    if (!d || d.type !== 'FORM_SUBMITTED') return;
+    var mc = d.metaConversion;
+    var eventId = (mc && typeof mc.event_id === 'string' && mc.event_id) || (d.opportunityId ? 'bs-' + d.opportunityId : uid());
+    if (sent[eventId]) return;
+    sent[eventId] = true;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'bs_lead', event_name: 'Lead', event_id: eventId, form_id: d.formId || '' });
+  });
+})();
 </script>
 </body>
 </html>
