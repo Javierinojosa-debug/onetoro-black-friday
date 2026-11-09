@@ -12,6 +12,9 @@
     var m=(q.get('mercado')||'').toLowerCase();
     var fr = !on && (q.has('fr') || m==='fr' || m==='francia' || m==='france' || (q.get('lang')||'').toLowerCase()==='fr' || h==='#fr');
     if(fr){ var de=document.documentElement; de.classList.add('fr','i18n-pending'); de.lang='fr'; window.OT_MERCADO='fr'; }
+    // Versión Portugal: ?pt, ?mercado=pt, ?mercado=portugal, ?lang=pt o #pt → página en portugués de Portugal (con sorteo)
+    var pt = !on && !fr && (q.has('pt') || m==='pt' || m==='portugal' || (q.get('lang')||'').toLowerCase()==='pt' || h==='#pt');
+    if(pt){ var dp=document.documentElement; dp.classList.add('pt','i18n-pending'); dp.lang='pt-PT'; window.OT_MERCADO='pt'; }
   }catch(e){ window.OT_MERCADO='es'; }
 })();
 </script>
@@ -320,13 +323,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="mobile-cta" id="mobile-cta"><a href="#registro">Quiero mi acceso prioritario</a></div>
 
 <script>
-// Versión Francia (?mercado=fr): traduce la página al francés. El sorteo se mantiene.
+// Versiones Francia (?mercado=fr) y Portugal (?mercado=pt): traducen la página. El sorteo se mantiene.
 (function(){
-  if (window.OT_MERCADO !== 'fr') return;
+  var LANG = window.OT_MERCADO;
+  if (LANG !== 'fr' && LANG !== 'pt') return;
   var de = document.documentElement;
   try {
     var CHECK = '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFE500" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
-    var T = [
+    var T_fr = [
       // [selector, html]  (texto con etiquetas permitidas)
       ['.brand-tag', 'La TV de la tauromachie'],
       ['.top .btn-ghost', 'M’inscrire sur la liste'],
@@ -375,9 +379,58 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       ['#mobile-cta a', 'Je veux mon accès prioritaire'],
       ['.bs-embed noscript', '<a href="https://app.beyondsales.es/f/c05bd2df-dfe5-4e94-bb57-9132ac087199">Ouvrir le formulaire d’inscription</a>']
     ];
+    var T_pt = [
+      ['.brand-tag', 'A TV da tauromaquia'],
+      ['.top .btn-ghost', 'Inscrever-me na lista'],
+      ['.hero .eyebrow', 'Black Friday OneToro TV · Inscrições de 16 a 22 de novembro'],
+      ['.hero h1', 'Chega a promoção mais <mark>brava</mark> do ano'],
+      ['.hero-brand span', 'A TV da tauromaquia'],
+      ['.hero-sub .no-latam', 'Inscreve-te, garante acesso prioritário e entra no sorteio de um cartão-oferta de 300 € na loja oficial OneToro!'],
+      ['#timer-wait > p', 'A oferta abre para a lista prioritária dentro de'],
+      ['.unit:nth-child(1) small', 'Dias'],
+      ['.unit:nth-child(2) small', 'Horas'],
+      ['.unit:nth-child(3) small', 'Min'],
+      ['.unit:nth-child(4) small', 'Seg'],
+      ['#timer-live', 'A oferta já está aberta para a lista prioritária'],
+      ['.ticks span:nth-child(1)', CHECK + 'Sorteio 300 € onetoro.shop'],
+      ['.ticks span:nth-child(2)', CHECK + 'Acesso prioritário à oferta'],
+      ['.ticks span:nth-child(3)', CHECK + 'Inscreve-te em menos de um minuto'],
+      ['.form-card h2', 'Reserva o teu acesso prioritário'],
+      ['.form-card .sub', 'Enviamos-te a oferta a 22 de novembro, 24 h antes de todos, e participas no sorteio de 300 € na onetoro.shop.'],
+      ['.draw-copy .eyebrow', 'E ainda, só por te inscreveres'],
+      ['.draw-copy h2', 'Sorteamos um cartão-oferta de 300 € para a onetoro.shop'],
+      ['.draw-copy p:nth-of-type(2)', 'Todas as pessoas inscritas na lista prioritária de 16 a 22 de novembro entram diretamente no sorteio, que se realiza a 25 de novembro. Sem compras nem passos extra.'],
+      ['.draw-copy .draw-fine', 'Sorteio a 25 de novembro · Consulta o <a href="/bases-sorteo/">regulamento do sorteio</a>'],
+      ['.draw-copy .btn-link', 'Participar no sorteio'],
+      ['.includes .eyebrow', 'O que inclui a promoção OneToro TV'],
+      ['.includes .h2', 'Toda a temporada na OneToro TV, ao preço mais baixo do ano.'],
+      ['.inc-list li:nth-child(1) h3', 'O maior desconto do ano'],
+      ['.inc-list li:nth-child(2) h3', 'Acesso ao canal 24 h'],
+      ['.inc-list li:nth-child(2) p', 'O canal OneToro TV em emissão 24 horas por dia.'],
+      ['.inc-list li:nth-child(3) h3', 'Mais de 7.500 horas de conteúdo'],
+      ['.inc-list li:nth-child(3) p', 'Corridas, feiras e conteúdo taurino para veres quando quiseres.'],
+      ['.inc-list li:nth-child(4) h3', 'Estreias exclusivas todas as semanas'],
+      ['.inc-list li:nth-child(4) p', 'Conteúdo novo que só encontras na OneToro.'],
+      ['.inc-list li:nth-child(5) h3', 'Feiras em direto da temporada 2027'],
+      ['.inc-list li:nth-child(5) p', 'As melhores feiras de Espanha, França, Portugal e América Latina.'],
+      ['.price .tag', 'Preço secreto'],
+      ['.price .old', '[XX,XX €] / ano'],
+      ['.price > p', 'Revelamo-lo a 22 de novembro, primeiro à lista prioritária.'],
+      ['.price .btn-link', 'Desbloquear o meu preço'],
+      ['.final-box h2', 'Não deixes que te contem. Entra antes de todos.'],
+      ['.final-box .btn-white', 'Inscrever-me na lista prioritária'],
+      ['.foot-brand span:first-of-type', 'OneToro TV · A TV da tauromaquia · <a href="https://onetoro.tv/">onetoro.tv</a>'],
+      ['footer nav a[href="/aviso-legal/"]', 'Aviso legal'],
+      ['footer nav a[href*="privacy-policy"]', 'Política de privacidade'],
+      ['footer nav a[data-otc-open]', 'Configurar cookies'],
+      ['footer nav a[href="/bases-sorteo/"]', 'Regulamento do sorteio'],
+      ['#mobile-cta a', 'Quero o meu acesso prioritário'],
+      ['.bs-embed noscript', '<a href="https://app.beyondsales.es/f/c05bd2df-dfe5-4e94-bb57-9132ac087199">Abrir o formulário de inscrição</a>']
+    ];
+    var T = LANG === 'pt' ? T_pt : T_fr;
     var missing = [];
     T.forEach(function(t){ var el = document.querySelector(t[0]); if (el) el.innerHTML = t[1]; else missing.push(t[0]); });
-    var A = [ // [selector, atributo, valor]
+    var A_fr = [ // [selector, atributo, valor]
       ['.brand-link', 'aria-label', 'OneToro TV, la TV de la tauromachie'],
       ['.timer', 'aria-label', 'Compte à rebours jusqu’à l’ouverture de l’offre'],
       ['.banner', 'alt', 'Taureau dans l’arène. Black Friday OneToro : débarque la promo la plus brave de l’année. Accès prioritaire, inscrivez-vous dès maintenant.'],
@@ -385,12 +438,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       ['.draw-img', 'alt', 'Carte cadeau OneToro Shop d’une valeur de 300 €'],
       ['footer nav', 'aria-label', 'Mentions légales']
     ];
+    var A_pt = [
+      ['.brand-link', 'aria-label', 'OneToro TV, a TV da tauromaquia'],
+      ['.timer', 'aria-label', 'Contagem decrescente até à abertura da oferta'],
+      ['.banner', 'alt', 'Touro na praça. Black Friday OneToro: chega a promoção mais brava do ano. Acesso prioritário, regista-te já.'],
+      ['.banner', 'src', '/banner-pt.jpg'],
+      ['.draw-img', 'alt', 'Cartão-oferta OneToro Shop no valor de 300 €'],
+      ['footer nav', 'aria-label', 'Legal']
+    ];
+    var A = LANG === 'pt' ? A_pt : A_fr;
     A.forEach(function(a){ var el = document.querySelector(a[0]); if (el) el.setAttribute(a[1], a[2]); else missing.push(a[0]); });
     document.title = 'Black Friday OneToro TV';
     var md = document.querySelector('meta[name="description"]');
-    if (md) md.setAttribute('content', 'Inscrivez-vous du 16 au 22 novembre sur la liste prioritaire du Black Friday OneToro : accès prioritaire à l’offre et tirage au sort d’une carte cadeau de 300 € sur onetoro.shop.');
-    if (missing.length && window.console) console.warn('[i18n fr] sin traducir:', missing);
-  } catch (e) { if (window.console) console.error('[i18n fr]', e); }
+    if (md) md.setAttribute('content', LANG === 'pt' ? 'Inscreve-te de 16 a 22 de novembro na lista prioritária do Black Friday OneToro: acesso prioritário à oferta e sorteio de um cartão-oferta de 300 € na onetoro.shop.' : 'Inscrivez-vous du 16 au 22 novembre sur la liste prioritaire du Black Friday OneToro : accès prioritaire à l’offre et tirage au sort d’une carte cadeau de 300 € sur onetoro.shop.');
+    if (missing.length && window.console) console.warn('[i18n ' + LANG + '] sin traducir:', missing);
+  } catch (e) { if (window.console) console.error('[i18n ' + LANG + ']', e); }
   de.classList.remove('i18n-pending');
 })();
 </script>
@@ -407,9 +469,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var diff = Math.max(0, TARGET - Date.now());
     var d = pad(Math.floor(diff/86400000)), h = pad(Math.floor(diff/3600000)%24), m = pad(Math.floor(diff/60000)%60), s = pad(Math.floor(diff/1000)%60);
     units.d.textContent = d; units.h.textContent = h; units.m.textContent = m; units.s.textContent = s;
-    var FR = window.OT_MERCADO === 'fr';
-    if (diff <= 0){ wait.hidden = true; live.hidden = false; fin.textContent = FR ? 'L’offre est ouverte' : 'La oferta ya está abierta'; return; }
-    fin.textContent = FR ? ('Plus que ' + d + ' j · ' + h + ' h · ' + m + ' min · ' + s + ' s') : ('Quedan ' + d + ' d · ' + h + ' h · ' + m + ' min · ' + s + ' s');
+    var LG = window.OT_MERCADO;
+    var OPEN = {fr: 'L’offre est ouverte', pt: 'A oferta já está aberta'}[LG] || 'La oferta ya está abierta';
+    if (diff <= 0){ wait.hidden = true; live.hidden = false; fin.textContent = OPEN; return; }
+    if (LG === 'fr') fin.textContent = 'Plus que ' + d + ' j · ' + h + ' h · ' + m + ' min · ' + s + ' s';
+    else if (LG === 'pt') fin.textContent = 'Faltam ' + d + ' d · ' + h + ' h · ' + m + ' min · ' + s + ' s';
+    else fin.textContent = 'Quedan ' + d + ' d · ' + h + ' h · ' + m + ' min · ' + s + ' s';
   }
   tick(); setInterval(tick, 1000);
 
@@ -489,10 +554,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 })();
 </script>
 <script src="/consent.js" defer></script>
-<!-- Chatbot Verónica (Beyond Sherpa). Solo en español: no se carga en la versión Francia -->
+<!-- Chatbot Verónica (Beyond Sherpa). Solo en español: no se carga en las versiones Francia y Portugal -->
 <script>
 (function(){
-  if (window.OT_MERCADO === 'fr') return;
+  if (window.OT_MERCADO === 'fr' || window.OT_MERCADO === 'pt') return;
   var s = document.createElement('script');
   s.src = 'https://app.beyondsherpa.com/widget.js'; s.async = true;
   s.setAttribute('data-agent', 'c0f5b40876b859742e236209914b3394c17821d80d43d6a0');
